@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event RSVP</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #f472b6;
+      --accent-dark: #ec4899;
+      --border: #1f2937;
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Helvetica Neue, Arial;
+      background: radial-gradient(1000px 800px at 50% -200px, #1e293b, #0f172a);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .card {
+      background: linear-gradient(160deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px;
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 16px 36px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+      backdrop-filter: blur(8px);
+      animation: fadeIn 0.6s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px);} to {opacity:1; transform: translateY(0);} }
+
+    h1 {
+      font-size: clamp(24px, 3vw, 32px);
+      margin: 0 0 10px;
+      color: var(--accent);
+      text-align: center;
+    }
+    p.sub {
+      margin: 0 0 28px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    form { display: grid; gap: 20px; }
+    .field { display: grid; gap: 8px; }
+    label { font-weight: 600; font-size: 15px; }
+
+    input, select, textarea {
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(244,114,182,0.25);
+    }
+
+    .radio-group { display: flex; gap: 16px; }
+    .radio {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #1e293b;
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: border-color .2s, background .2s;
+    }
+    .radio input { appearance: none; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--muted); display:inline-block; }
+    .radio input:checked { border-color: var(--accent); background: var(--accent); }
+    .radio:hover { border-color: var(--accent-dark); background: #27324a; }
+
+    button {
+      appearance: none;
+      border: none;
+      background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #0f172a;
+      box-shadow: 0 8px 20px rgba(236,72,153,0.25);
+      transition: transform .05s, filter .2s;
+    }
+    button:hover { filter: brightness(1.08); }
+    button:active { transform: translateY(1px); }
+
+    .success {
+      display: none;
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 1px solid #3f6212;
+      background: #1a2e05;
+      color: #d9f99d;
+      border-radius: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>You're Invited!</h1>
+    <p class="sub">Please RSVP below so we can prepare for your arrival.</p>
+
+    <form id="rsvpForm">
+      <div class="field">
+        <label for="name">Full Name</label>
+        <input type="text" id="name" name="name" placeholder="e.g., Alex Johnson" required />
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" placeholder="you@example.com" required />
+      </div>
+
+      <div class="field">
+        <label>Will you be attending?</label>
+        <div class="radio-group">
+          <label class="radio"><input type="radio" name="attending" value="Yes" required /> Yes</label>
+          <label class="radio"><input type="radio" name="attending" value="No" /> No</label>
+          <label class="radio"><input type="radio" name="attending" value="Maybe" /> Maybe</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="guests">Number of Guests</label>
+        <select id="guests" name="guests" required>
+          <option value="" disabled selected>Select</option>
+          <option value="0">Just me</option>
+          <option value="1">+1 guest</option>
+          <option value="2">+2 guests</option>
+          <option value="3">+3 guests</option>
+          <option value="4">+4 guests</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="notes">Special Requests (optional)</label>
+        <textarea id="notes" name="notes" rows="3" placeholder="Dietary restrictions, accessibility needs, etc."></textarea>
+      </div>
+
+      <button type="submit">Send RSVP</button>
+      <div id="successMsg" class="success">🎉 Thank you! Your RSVP has been received.</div>
+    </form>
+  </div>
+
+  <script>
+    const form = document.getElementById('rsvpForm');
+    const successMsg = document.getElementById('successMsg');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+
+      const data = Object.fromEntries(new FormData(form).entries());
+      data.timestamp = new Date().toISOString();
+      console.log('RSVP payload →', data);
+
+      successMsg.style.display = 'block';
+      setTimeout(() => { form.reset(); successMsg.style.display = 'none'; }, 2500);
+    });
+  </script>
+</body>
+</html>
